@@ -3,6 +3,7 @@ import re
 import string
 
 import kubernetes
+import nerve
 
 
 class DimensionReader(object):
@@ -29,8 +30,8 @@ class DimensionReader(object):
     def read(self, hosts):
         """
         Computes the dimension for the given hosts
-        :param hosts: list of hosts
-        :return: a dict of host to their dimensions
+        :param hosts: dict of host identifiers to host address
+        :return: a dict of host identifier to their dimensions
         """
         pass
 
@@ -109,10 +110,12 @@ class KubernetesDimensionReader(DimensionReader):
         pods = response.get('items', [])
         for pod in pods:
             pod_ip = pod.get('status', {}).get('podIP')
-            if pod_ip is None or pod_ip not in hosts:
+            # find the host identifier with the given address
+            host_id = _find_host_id_by_ip(hosts, pod_ip)
+            if pod_ip is None or host_id is None:
                 continue
             labels = pod.get('metadata', {}).get('labels', {})
-            host_dimension[pod_ip] = self.generate_dimension(labels, self.dim_generators)
+            host_dimension[host_id] = self.generate_dimension(labels, self.dim_generators)
         return host_dimension
 
     def create_dim_generators(self, dimension_regex):
@@ -130,6 +133,81 @@ class KubernetesDimensionReader(DimensionReader):
                 matches = label_regex.regex.findall(label_value)
                 if len(matches) > 0:
                     generated[str(dim)] = string.replace(matches[0], "--", "_", -1)
+        return generated
+
+
+class NerveDimensionReader(DimensionReader):
+    """
+   A dimension reader which readers the nerve config file and creates dimension from the service
+   identifiers. This readers need the dimension_name and a regex to extract dimension from
+   the service identifier
+
+   Example:
+   ```
+       {
+            'spec': {
+                'dimensions': {
+                    'nerve': {
+                        'cassandra_cluster': '^cassandra_([\\w_-]+).',
+                        'cassandra_instance': '^cassandra_[\\w_-]+.([\\w_-]+).',
+                    }
+                },
+            }
+        })
+   ```
+   In above config, the nerve dimension reader is configured to create 2 dimensions.
+   The first dimension name is ```cassandra_cluster``` and dimension value is created by
+   apply regex ```^cassandra_([\\w_-]+).'``` on the value of label ```cassandra_cluster``` in the
+   pods metadata.
+   So dimension extraction can be expressed in the following format
+   ```
+       "nerve" : {
+           "${dimension_name}" : "${regex}"
+       }
+   ```
+   Note the regex can also contains groups. For example, for regex ```^cassandra_([\\w_-]+).``` and
+   service identifier ```cassandra_dev.main.norcal-devc:10.93.118.202.9042.v2.new```, the value
+   ```dev``` will be extracted as the dimension value
+   """
+
+    def __init__(self):
+        super(NerveDimensionReader, self).__init__()
+        self.dim_generators = {}
+
+    def pr(self):
+        return self.dim_generators
+
+    def name(self):
+        return "nerve"
+
+    def configure(self, conf):
+        self.dim_generators = self.create_dim_generators(conf)
+
+    def read(self, hosts):
+        values, err = nerve.read()
+        if err is not None:
+            return {}
+        services = values.get('services', {})
+        host_dimensions = {}
+        for host_identifier, host_ip in hosts.items():
+            value = services.get(host_identifier)
+            if value is None:
+                continue
+            host_dimensions[host_identifier] = self.generate_dimensions(host_identifier, self.dim_generators)
+        return host_dimensions
+
+    def create_dim_generators(self, dimension_regex):
+        dim_compile_rx = {}
+        for dim, regex in dimension_regex.items():
+            dim_compile_rx[dim] = re.compile(regex)
+        return dim_compile_rx
+
+    def generate_dimensions(self, host_id, dim_generators):
+        generated = {}
+        for dim, regex in dim_generators.items():
+            matches = regex.findall(host_id)
+            if len(matches) > 0:
+                generated[dim] = matches[0]
         return generated
 
 
@@ -170,7 +248,8 @@ class CompositeDimensionReader(DimensionReader):
 
 
 REGISTRY = {
-    'kubernetes': KubernetesDimensionReader()
+    'kubernetes': KubernetesDimensionReader(),
+    'nerve': NerveDimensionReader(),
 }
 
 DEFAULT_DIMENSION_READER = NoopDimensionReader()
@@ -179,7 +258,15 @@ DEFAULT_DIMENSION_READER = NoopDimensionReader()
 def get_reader(name):
     """
     Returns the dimension reader for the given name
-    :param name: name of the dimension reader
+    :param name: name of the dimension readereidfcciknhlfduigieigndrknvcrvjckvnjjhbiedfhf
+
     :return: dimension reader by name or ```DEFAULT_DIMENSION_READER```
     """
     return REGISTRY.get(name, DEFAULT_DIMENSION_READER)
+
+
+def _find_host_id_by_ip(hosts, ip):
+    for host_id, host_ip in hosts.items():
+        if ip == host_ip:
+            return host_id
+    return None

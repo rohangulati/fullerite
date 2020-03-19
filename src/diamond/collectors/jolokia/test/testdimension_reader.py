@@ -7,11 +7,13 @@ from test import CollectorTestCase
 from test import get_collector_config
 from test import unittest
 
-from dimension_reader import NoopDimensionReader, CompositeDimensionReader, KubernetesDimensionReader
-from test_readers import TestDimensionReader
 import dimension_reader
+from dimension_reader import NoopDimensionReader, CompositeDimensionReader, KubernetesDimensionReader, \
+    NerveDimensionReader
 from mock import Mock
 from mock import patch
+
+from test_readers import TestDimensionReader
 
 
 ################################################################################
@@ -95,7 +97,7 @@ class TestKubernetesDimensionReader(CollectorTestCase):
                 }
             }
             self.dimension_reader.configure(config)
-            actual = self.dimension_reader.read(['172.23.0.42'])
+            actual = self.dimension_reader.read({'172.23.0.42': '172.23.0.42'})
             expected = {
                 '172.23.0.42': {
                     'paasta_service': 'kafka-operator',
@@ -121,7 +123,7 @@ class TestKubernetesDimensionReader(CollectorTestCase):
                 }
             }
             self.dimension_reader.configure(config)
-            actual = self.dimension_reader.read(['172.23.0.42'])
+            actual = self.dimension_reader.read({'172.23.0.42': '172.23.0.42'})
             expected = {'172.23.0.42': {}}
             self.assertEquals(expected, actual)
 
@@ -131,7 +133,7 @@ class TestKubernetesDimensionReader(CollectorTestCase):
 
         with patch("kubernetes.Kubelet.list_pods", Mock(side_effect=se)):
             self.dimension_reader.configure({})
-            actual = self.dimension_reader.read(['10.1.1.1', '10.1.1.1'])
+            actual = self.dimension_reader.read({'10.1.1.1': '10.1.1.1', '10.1.1.2': '10.1.1.2'})
             self.assertEquals({}, actual)
 
     def test_should_not_fail_when_kubelet_fails(self):
@@ -145,15 +147,85 @@ class TestKubernetesDimensionReader(CollectorTestCase):
                 }
             }
             self.dimension_reader.configure(config)
-            actual = self.dimension_reader.read(['10.1.1.1', '10.1.1.1'])
+            actual = self.dimension_reader.read({'10.1.1.1': '10.1.1.1', '10.1.1.2': '10.1.1.2'})
             self.assertEquals({}, actual)
+
+
+class TestNerveDimensionReader(CollectorTestCase):
+    def setUp(self):
+        self.dimension_reader = NerveDimensionReader()
+
+    def test_import(self):
+        self.assertTrue(NerveDimensionReader)
+
+    def test_should_generate_dimensions(self):
+        def se():
+            return json.loads(self.getFixture('nerve.json').getvalue()), None
+
+        with patch("nerve.read", Mock(side_effect=se)):
+            config = {
+                'cluster_name': '^cassandra_([\\w_-]+).'
+            }
+            self.dimension_reader.configure(config)
+            actual = self.dimension_reader.read({
+                "cassandra_dev.main.norcal-devc:10.93.118.202.9042": "10.93.118.202"
+            })
+            expected = {
+                'cassandra_dev.main.norcal-devc:10.93.118.202.9042': {
+                    'cluster_name': 'dev',
+                }
+            }
+            self.assertEquals(expected, actual)
+
+    def test_should_return_empty_if_none_match(self):
+        def se():
+            return json.loads(self.getFixture('nerve.json').getvalue()), None
+
+        with patch("nerve.read", Mock(side_effect=se)):
+            config = {
+                'cluster_name': '^cassandra_([\\w_-]+).',
+            }
+            self.dimension_reader.configure(config)
+            actual = self.dimension_reader.read({"random": "10.93.118.202"})
+            expected = {}
+            self.assertEquals(expected, actual)
+
+    def test_should_not_generate_dimensions_when_regex_not_matching(self):
+        def se():
+            return json.loads(self.getFixture('nerve.json').getvalue()), None
+
+        with patch("nerve.read", Mock(side_effect=se)):
+            config = {
+                'cluster_name': '^should_not_match_([\\w_-]+).',
+            }
+            self.dimension_reader.configure(config)
+            actual = self.dimension_reader.read({
+                "cassandra_dev.main.norcal-devc:10.93.118.202.9042": "10.93.118.202"
+            })
+            expected = {"cassandra_dev.main.norcal-devc:10.93.118.202.9042": {}}
+            self.assertEquals(expected, actual)
+
+    def test_should_not_fail_when_nerve_fails(self):
+        def se():
+            return None, IOError("Some error")
+
+        with patch("nerve.read", Mock(side_effect=se)):
+            config = {
+                'cluster_name': '^cassandra_([\\w_-]+).'
+            }
+            self.dimension_reader.configure(config)
+            actual = self.dimension_reader.read({
+                "cassandra_dev.main.norcal-devc:10.93.118.202.9042": "10.93.118.202"
+            })
+            expected = {}
+            self.assertEquals(expected, actual)
 
 
 class TestDimensionReaderMethods(CollectorTestCase):
 
     def test_should_return_registered_reader(self):
-        actual = dimension_reader.get_reader('kubernetes')
-        self.assertEquals(type(KubernetesDimensionReader()), type(actual))
+        self.assertEquals(type(KubernetesDimensionReader()), type(dimension_reader.get_reader('kubernetes')))
+        self.assertEquals(type(NerveDimensionReader()), type(dimension_reader.get_reader('nerve')))
 
     def test_should_return_default_reader_for_invalid_type(self):
         actual = dimension_reader.get_reader('random')

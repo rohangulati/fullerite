@@ -1,6 +1,8 @@
 import abc
+import re
 
 import kubernetes
+import nerve
 
 
 class HostReader(object):
@@ -26,10 +28,44 @@ class HostReader(object):
     @abc.abstractmethod
     def read(self):
         """
-        Returns to a lit of hosts
-        :return: a list of hosts
+        Returns to a dict of host identifier and host addree
+        :return:
         """
         pass
+
+
+class NerveHostReader(HostReader):
+    """
+    A host reader that reader form nerve config file.
+    The host reader uses regex configured in ```host_id_regex```  field of ```spec```
+    to match host identifier in the nerve conf file to read matching hosts
+    """
+
+    def __init__(self):
+        super(NerveHostReader, self).__init__()
+        self.regex = None
+
+    def name(self):
+        return "nerve"
+
+    def configure(self, conf):
+        rx = conf.get('spec', {}).get('host_id_regex')
+        if rx is not None:
+            self.regex = re.compile(rx)
+
+    def read(self):
+        if self.regex is None:
+            return {}
+
+        data, err = nerve.read()
+        if err is not None:
+            return {}
+
+        hosts = {}
+        for name, values in data.get('services', {}).items():
+            if self.regex.match(name):
+                hosts[name] = values.get('host')
+        return hosts
 
 
 class KubernetesHostReader(HostReader):
@@ -50,9 +86,9 @@ class KubernetesHostReader(HostReader):
 
     def read(self):
         if len(self.label_selectors) == 0:
-            return []
+            return {}
         response, err = self.kubelet.list_pods()
-        hosts = []
+        hosts = {}
         if err is not None:
             return hosts
         pods = response.get('items', [])
@@ -60,7 +96,7 @@ class KubernetesHostReader(HostReader):
             if self._pod_matches_selectors(pod):
                 pod_ip = pod.get('status', {}).get('podIP')
                 if pod_ip is not None:
-                    hosts.append(pod_ip)
+                    hosts[pod_ip] = pod_ip
         return hosts
 
     def _pod_matches_selectors(self, pod):
@@ -86,13 +122,14 @@ class StandaloneHostReader(HostReader):
     """
 
     def __init__(self):
-        self.host = []
+        self.hosts = {}
 
     def name(self):
         return "standalone"
 
     def configure(self, conf):
-        self.hosts = [conf['host']]
+        host = conf['host']
+        self.hosts = {host: host}
 
     def read(self):
         return self.hosts
@@ -101,6 +138,7 @@ class StandaloneHostReader(HostReader):
 REGISTRY = {
     'kubernetes': KubernetesHostReader(),
     'standalone': StandaloneHostReader(),
+    'nerve': NerveHostReader(),
 }
 
 DEFAULT_READER = 'standalone'

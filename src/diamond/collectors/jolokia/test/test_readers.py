@@ -45,4 +45,4 @@ class TestHostReader(HostReader):
         pass
 
     def read(self):
-        return self.hosts
+        return {host: host for host in self.hosts}

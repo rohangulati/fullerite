@@ -1,0 +1,546 @@
+{
+  "heartbeat_path": "/var/run/nerve/heartbeat",
+  "instance_id": "10-40-19-94-uswest1cdevc",
+  "services": {
+    "cassandra_dev.main.norcal-devc:10.93.118.202.9042": {
+      "check_interval": 7.0,
+      "checks": [
+        {
+          "fall": 2,
+          "headers": {
+            "Host": "cassandra_dev.main"
+          },
+          "host": "10.40.19.94",
+          "open_timeout": 6,
+          "port": 6666,
+          "rise": 1,
+          "timeout": 6,
+          "type": "http",
+          "uri": "/tcp/cassandra_dev.main/35588/status"
+        }
+      ],
+      "host": "10.40.19.94",
+      "labels": {
+        "region:sf-devc": "",
+        "region:uswest1-devc": ""
+      },
+      "port": 35588,
+      "weight": 10,
+      "zk_hosts": [
+        "10.40.11.190:22181",
+        "10.40.28.93:22181",
+        "10.40.10.202:22181",
+        "10.40.26.152:22181"
+      ],
+      "zk_path": "/envoy/global/cassandra_dev.main"
+    },
+    "cassandra_dev.main.norcal-devc:10.93.118.202.9042.v2.new": {
+      "check_interval": 7.0,
+      "checks": [
+        {
+          "fall": 2,
+          "headers": {},
+          "host": "10.93.118.202",
+          "open_timeout": 6,
+          "port": 6666,
+          "rise": 1,
+          "timeout": 6,
+          "type": "http",
+          "uri": "/tcp/cassandra_dev.main/9042/status"
+        }
+      ],
+      "host": "10.93.118.202",
+      "labels": {
+        "region:sf-devc": "",
+        "region:uswest1-devc": ""
+      },
+      "port": 9042,
+      "weight": 10,
+      "zk_hosts": [
+        "10.40.11.190:22181",
+        "10.40.28.93:22181",
+        "10.40.10.202:22181",
+        "10.40.26.152:22181"
+      ],
+      "zk_path": "/smartstack/global/cassandra_dev.main"
+    },
+    "cassandra_dev.main.pnw-devc:10.93.118.202.9042": {
+      "check_interval": 7.0,
+      "checks": [
+        {
+          "fall": 2,
+          "headers": {
+            "Host": "cassandra_dev.main"
+          },
+          "host": "10.40.19.94",
+          "open_timeout": 6,
+          "port": 6666,
+          "rise": 1,
+          "timeout": 6,
+          "type": "http",
+          "uri": "/tcp/cassandra_dev.main/35588/status"
+        }
+      ],
+      "host": "10.40.19.94",
+      "labels": {
+        "region:uswest2-devc": ""
+      },
+      "port": 35588,
+      "weight": 10,
+      "zk_hosts": [
+        "10.81.16.240:22181",
+        "10.81.22.142:22181",
+        "10.81.25.26:22181"
+      ],
+      "zk_path": "/envoy/global/cassandra_dev.main"
+    },
+    "cassandra_dev.main.pnw-devc:10.93.118.202.9042.v2.new": {
+      "check_interval": 7.0,
+      "checks": [
+        {
+          "fall": 2,
+          "headers": {},
+          "host": "10.93.118.202",
+          "open_timeout": 6,
+          "port": 6666,
+          "rise": 1,
+          "timeout": 6,
+          "type": "http",
+          "uri": "/tcp/cassandra_dev.main/9042/status"
+        }
+      ],
+      "host": "10.93.118.202",
+      "labels": {
+        "region:uswest2-devc": ""
+      },
+      "port": 9042,
+      "weight": 10,
+      "zk_hosts": [
+        "10.81.16.240:22181",
+        "10.81.22.142:22181",
+        "10.81.25.26:22181"
+      ],
+      "zk_path": "/smartstack/global/cassandra_dev.main"
+    },
+    "compute-infra-test-service.main.norcal-devc:10.93.117.39.8888": {
+      "check_interval": 2.0,
+      "checks": [
+        {
+          "fall": 2,
+          "headers": {
+            "Host": "compute-infra-test-service.main"
+          },
+          "host": "10.40.19.94",
+          "open_timeout": 1.0,
+          "port": 6666,
+          "rise": 1,
+          "timeout": 1.0,
+          "type": "http",
+          "uri": "/https/compute-infra-test-service.main/40373/status"
+        }
+      ],
+      "host": "10.40.19.94",
+      "labels": {
+        "superregion:norcal-devc": ""
+      },
+      "port": 40373,
+      "weight": 10,
+      "zk_hosts": [
+        "10.40.11.190:22181",
+        "10.40.28.93:22181",
+        "10.40.10.202:22181",
+        "10.40.26.152:22181"
+      ],
+      "zk_path": "/envoy/global/compute-infra-test-service.main"
+    },
+    "compute-infra-test-service.main.norcal-devc:10.93.117.39.8888.v2.new": {
+      "check_interval": 2.0,
+      "checks": [
+        {
+          "fall": 2,
+          "headers": {},
+          "host": "10.93.117.39",
+          "open_timeout": 1.0,
+          "port": 6666,
+          "rise": 1,
+          "timeout": 1.0,
+          "type": "http",
+          "uri": "/http/compute-infra-test-service.main/8888/status"
+        }
+      ],
+      "host": "10.93.117.39",
+      "labels": {
+        "superregion:norcal-devc": ""
+      },
+      "port": 8888,
+      "weight": 10,
+      "zk_hosts": [
+        "10.40.11.190:22181",
+        "10.40.28.93:22181",
+        "10.40.10.202:22181",
+        "10.40.26.152:22181"
+      ],
+      "zk_path": "/smartstack/global/compute-infra-test-service.main"
+    },
+    "compute-infra-test-service.main.norcal-devc:10.93.117.64.8888": {
+      "check_interval": 2.0,
+      "checks": [
+        {
+          "fall": 2,
+          "headers": {
+            "Host": "compute-infra-test-service.main"
+          },
+          "host": "10.40.19.94",
+          "open_timeout": 1.0,
+          "port": 6666,
+          "rise": 1,
+          "timeout": 1.0,
+          "type": "http",
+          "uri": "/https/compute-infra-test-service.main/40907/status"
+        }
+      ],
+      "host": "10.40.19.94",
+      "labels": {
+        "superregion:norcal-devc": ""
+      },
+      "port": 40907,
+      "weight": 10,
+      "zk_hosts": [
+        "10.40.11.190:22181",
+        "10.40.28.93:22181",
+        "10.40.10.202:22181",
+        "10.40.26.152:22181"
+      ],
+      "zk_path": "/envoy/global/compute-infra-test-service.main"
+    },
+    "compute-infra-test-service.main.norcal-devc:10.93.117.64.8888.v2.new": {
+      "check_interval": 2.0,
+      "checks": [
+        {
+          "fall": 2,
+          "headers": {},
+          "host": "10.93.117.64",
+          "open_timeout": 1.0,
+          "port": 6666,
+          "rise": 1,
+          "timeout": 1.0,
+          "type": "http",
+          "uri": "/http/compute-infra-test-service.main/8888/status"
+        }
+      ],
+      "host": "10.93.117.64",
+      "labels": {
+        "superregion:norcal-devc": ""
+      },
+      "port": 8888,
+      "weight": 10,
+      "zk_hosts": [
+        "10.40.11.190:22181",
+        "10.40.28.93:22181",
+        "10.40.10.202:22181",
+        "10.40.26.152:22181"
+      ],
+      "zk_path": "/smartstack/global/compute-infra-test-service.main"
+    },
+    "compute-infra-test-service.main.norcal-devc:10.93.126.48.8888": {
+      "check_interval": 2.0,
+      "checks": [
+        {
+          "fall": 2,
+          "headers": {
+            "Host": "compute-infra-test-service.main"
+          },
+          "host": "10.40.19.94",
+          "open_timeout": 1.0,
+          "port": 6666,
+          "rise": 1,
+          "timeout": 1.0,
+          "type": "http",
+          "uri": "/https/compute-infra-test-service.main/42380/status"
+        }
+      ],
+      "host": "10.40.19.94",
+      "labels": {
+        "superregion:norcal-devc": ""
+      },
+      "port": 42380,
+      "weight": 10,
+      "zk_hosts": [
+        "10.40.11.190:22181",
+        "10.40.28.93:22181",
+        "10.40.10.202:22181",
+        "10.40.26.152:22181"
+      ],
+      "zk_path": "/envoy/global/compute-infra-test-service.main"
+    },
+    "compute-infra-test-service.main.norcal-devc:10.93.126.48.8888.v2.new": {
+      "check_interval": 2.0,
+      "checks": [
+        {
+          "fall": 2,
+          "headers": {},
+          "host": "10.93.126.48",
+          "open_timeout": 1.0,
+          "port": 6666,
+          "rise": 1,
+          "timeout": 1.0,
+          "type": "http",
+          "uri": "/http/compute-infra-test-service.main/8888/status"
+        }
+      ],
+      "host": "10.93.126.48",
+      "labels": {
+        "superregion:norcal-devc": ""
+      },
+      "port": 8888,
+      "weight": 10,
+      "zk_hosts": [
+        "10.40.11.190:22181",
+        "10.40.28.93:22181",
+        "10.40.10.202:22181",
+        "10.40.26.152:22181"
+      ],
+      "zk_path": "/smartstack/global/compute-infra-test-service.main"
+    },
+    "kafka-buff-low.main.norcal-devc:10.93.120.2.9092": {
+      "check_interval": 7.0,
+      "checks": [
+        {
+          "fall": 2,
+          "headers": {
+            "Host": "kafka-buff-low.main"
+          },
+          "host": "10.40.19.94",
+          "open_timeout": 6,
+          "port": 6666,
+          "rise": 1,
+          "timeout": 6,
+          "type": "http",
+          "uri": "/tcp/kafka-buff-low.main/46329/status"
+        }
+      ],
+      "host": "10.40.19.94",
+      "labels": {
+        "region:sf-devc": "",
+        "region:uswest1-devc": ""
+      },
+      "port": 46329,
+      "weight": 10,
+      "zk_hosts": [
+        "10.40.11.190:22181",
+        "10.40.28.93:22181",
+        "10.40.10.202:22181",
+        "10.40.26.152:22181"
+      ],
+      "zk_path": "/envoy/global/kafka-buff-low.main"
+    },
+    "kafka-buff-low.main.norcal-devc:10.93.120.2.9092.v2.new": {
+      "check_interval": 7.0,
+      "checks": [
+        {
+          "fall": 2,
+          "headers": {},
+          "host": "10.93.120.2",
+          "open_timeout": 6,
+          "port": 6666,
+          "rise": 1,
+          "timeout": 6,
+          "type": "http",
+          "uri": "/tcp/kafka-buff-low.main/9092/status"
+        }
+      ],
+      "host": "10.93.120.2",
+      "labels": {
+        "region:sf-devc": "",
+        "region:uswest1-devc": ""
+      },
+      "port": 9092,
+      "weight": 10,
+      "zk_hosts": [
+        "10.40.11.190:22181",
+        "10.40.28.93:22181",
+        "10.40.10.202:22181",
+        "10.40.26.152:22181"
+      ],
+      "zk_path": "/smartstack/global/kafka-buff-low.main"
+    },
+    "kafka-buff-low.main.pnw-devc:10.93.120.2.9092": {
+      "check_interval": 7.0,
+      "checks": [
+        {
+          "fall": 2,
+          "headers": {
+            "Host": "kafka-buff-low.main"
+          },
+          "host": "10.40.19.94",
+          "open_timeout": 6,
+          "port": 6666,
+          "rise": 1,
+          "timeout": 6,
+          "type": "http",
+          "uri": "/tcp/kafka-buff-low.main/46329/status"
+        }
+      ],
+      "host": "10.40.19.94",
+      "labels": {
+        "region:uswest2-devc": ""
+      },
+      "port": 46329,
+      "weight": 10,
+      "zk_hosts": [
+        "10.81.16.240:22181",
+        "10.81.22.142:22181",
+        "10.81.25.26:22181"
+      ],
+      "zk_path": "/envoy/global/kafka-buff-low.main"
+    },
+    "kafka-buff-low.main.pnw-devc:10.93.120.2.9092.v2.new": {
+      "check_interval": 7.0,
+      "checks": [
+        {
+          "fall": 2,
+          "headers": {},
+          "host": "10.93.120.2",
+          "open_timeout": 6,
+          "port": 6666,
+          "rise": 1,
+          "timeout": 6,
+          "type": "http",
+          "uri": "/tcp/kafka-buff-low.main/9092/status"
+        }
+      ],
+      "host": "10.93.120.2",
+      "labels": {
+        "region:uswest2-devc": ""
+      },
+      "port": 9092,
+      "weight": 10,
+      "zk_hosts": [
+        "10.81.16.240:22181",
+        "10.81.22.142:22181",
+        "10.81.25.26:22181"
+      ],
+      "zk_path": "/smartstack/global/kafka-buff-low.main"
+    },
+    "kafka-k8s.testcluster.norcal-devc:10.93.121.57.9092": {
+      "check_interval": 7.0,
+      "checks": [
+        {
+          "fall": 2,
+          "headers": {
+            "Host": "kafka-k8s.testcluster"
+          },
+          "host": "10.40.19.94",
+          "open_timeout": 6,
+          "port": 6666,
+          "rise": 1,
+          "timeout": 6,
+          "type": "http",
+          "uri": "/tcp/kafka-k8s.testcluster/42309/status"
+        }
+      ],
+      "host": "10.40.19.94",
+      "labels": {
+        "region:sf-devc": "",
+        "region:uswest1-devc": ""
+      },
+      "port": 42309,
+      "weight": 10,
+      "zk_hosts": [
+        "10.40.11.190:22181",
+        "10.40.28.93:22181",
+        "10.40.10.202:22181",
+        "10.40.26.152:22181"
+      ],
+      "zk_path": "/envoy/global/kafka-k8s.testcluster"
+    },
+    "kafka-k8s.testcluster.norcal-devc:10.93.121.57.9092.v2.new": {
+      "check_interval": 7.0,
+      "checks": [
+        {
+          "fall": 2,
+          "headers": {},
+          "host": "10.93.121.57",
+          "open_timeout": 6,
+          "port": 6666,
+          "rise": 1,
+          "timeout": 6,
+          "type": "http",
+          "uri": "/tcp/kafka-k8s.testcluster/9092/status"
+        }
+      ],
+      "host": "10.93.121.57",
+      "labels": {
+        "region:sf-devc": "",
+        "region:uswest1-devc": ""
+      },
+      "port": 9092,
+      "weight": 10,
+      "zk_hosts": [
+        "10.40.11.190:22181",
+        "10.40.28.93:22181",
+        "10.40.10.202:22181",
+        "10.40.26.152:22181"
+      ],
+      "zk_path": "/smartstack/global/kafka-k8s.testcluster"
+    },
+    "kafka-k8s.testcluster.pnw-devc:10.93.121.57.9092": {
+      "check_interval": 7.0,
+      "checks": [
+        {
+          "fall": 2,
+          "headers": {
+            "Host": "kafka-k8s.testcluster"
+          },
+          "host": "10.40.19.94",
+          "open_timeout": 6,
+          "port": 6666,
+          "rise": 1,
+          "timeout": 6,
+          "type": "http",
+          "uri": "/tcp/kafka-k8s.testcluster/42309/status"
+        }
+      ],
+      "host": "10.40.19.94",
+      "labels": {
+        "region:uswest2-devc": ""
+      },
+      "port": 42309,
+      "weight": 10,
+      "zk_hosts": [
+        "10.81.16.240:22181",
+        "10.81.22.142:22181",
+        "10.81.25.26:22181"
+      ],
+      "zk_path": "/envoy/global/kafka-k8s.testcluster"
+    },
+    "kafka-k8s.testcluster.pnw-devc:10.93.121.57.9092.v2.new": {
+      "check_interval": 7.0,
+      "checks": [
+        {
+          "fall": 2,
+          "headers": {},
+          "host": "10.93.121.57",
+          "open_timeout": 6,
+          "port": 6666,
+          "rise": 1,
+          "timeout": 6,
+          "type": "http",
+          "uri": "/tcp/kafka-k8s.testcluster/9092/status"
+        }
+      ],
+      "host": "10.93.121.57",
+      "labels": {
+        "region:uswest2-devc": ""
+      },
+      "port": 9092,
+      "weight": 10,
+      "zk_hosts": [
+        "10.81.16.240:22181",
+        "10.81.22.142:22181",
+        "10.81.25.26:22181"
+      ],
+      "zk_path": "/smartstack/global/kafka-k8s.testcluster"
+    }
+  }
+}

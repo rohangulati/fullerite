@@ -271,10 +271,10 @@ class JolokiaCollector(diamond.collector.Collector):
         port = self.config['port']
         # read for all the hosts in one go to optimize
         host_dimensions = self.dimension_reader.read(hosts)
-        for host in hosts:
+        for host_id, host in hosts.items():
             # host custom dimension is set for each host. This is accessible to different
             # collectors to use and attach dimension to their metrics for a host
-            self.host_custom_dimensions = host_dimensions.get(host, {})
+            self.host_custom_dimensions = host_dimensions.get(host_id, {})
             listing = self.list_request(host, port)
             try:
                 domains = listing['value'] if listing['status'] == 200 else {}

@@ -55,7 +55,7 @@ func init() {
 	RegisterCollector("HPAMetrics", newHPAMetrics)
 }
 
-// sanitizeDimensions replaces "/" or "_", and replace paasta_yelp_com with paasta 
+// sanitizeDimensions replaces "/" or "_", and replace paasta_yelp_com with paasta
 // in all dimension keys and returns a copy // of the map.
 func sanitizeDimensions(labels map[string]string) map[string]string {
 	sanitizedDimensions := make(map[string]string)

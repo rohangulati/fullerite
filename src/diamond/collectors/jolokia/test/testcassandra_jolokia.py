@@ -10,9 +10,10 @@ from test import unittest
 from cassandra_jolokia import CassandraJolokiaCollector
 from diamond.collector import Collector
 from dimension_reader import CompositeDimensionReader
-from test_readers import TestDimensionReader
 from mock import Mock
 from mock import patch
+
+from test_readers import TestDimensionReader
 
 
 ################################################################################
@@ -124,6 +125,41 @@ class TestCassandraJolokiaCollector(CollectorTestCase):
         metrics = find_metric(self.collector.payload, "org.apache.cassandra.metrics.ColumnFamily.LiveSSTableCount")
         self.assertNotEqual(len(metrics), 0)
         metric = find_by_dimension(metrics, "cassandra_instance", "main")
+        self.assertEquals(metric["type"], "GAUGE")
+        metric = find_by_dimension(metrics, "cassandra_instance", "main")
+        self.assertEquals(metric["type"], "GAUGE")
+
+    @patch.object(Collector, 'flush')
+    def test_should_have_cassandra_instance_dimension_in_nerve_mode(self, publish_mock):
+        self.collector.config.update(
+            {
+                'mode': 'nerve',
+                'spec': {
+                    'dimensions': {
+                        'nerve': {
+                            'cassandra_cluster': '^cassandra_([\\w_-]+).',
+                            'cassandra_instance': '^cassandra_[\\w_-]+.([\\w_-]+).',
+                        }
+                    },
+                    'host_id_regex': '^cassandra_[\\w_-]+'
+                }
+            })
+        self.collector.list_request = list_request
+        self.collector.process_config()
+
+        def se(url):
+            return self.getFixture("metrics.json")
+
+        def nerve_se():
+            return json.loads(self.getFixture('nerve.json').getvalue()), None
+
+        with patch('urllib2.urlopen', Mock(side_effect=se)):
+            with patch("nerve.read", Mock(side_effect=nerve_se)):
+                self.collector.collect()
+
+        metrics = find_metric(self.collector.payload, "org.apache.cassandra.metrics.ColumnFamily.LiveSSTableCount")
+        self.assertNotEqual(len(metrics), 0)
+        metric = find_by_dimension(metrics, "cassandra_cluster", "dev")
         self.assertEquals(metric["type"], "GAUGE")
         metric = find_by_dimension(metrics, "cassandra_instance", "main")
         self.assertEquals(metric["type"], "GAUGE")

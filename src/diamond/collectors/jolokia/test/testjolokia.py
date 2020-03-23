@@ -49,44 +49,6 @@ class TestJolokiaCollector(CollectorTestCase):
         self.assertPublishedMany(publish_mock, metrics)
 
     @patch.object(Collector, 'publish')
-    def test_should_work_in_mutiple_hosts_mode(self, publish_mock):
-        port = self.collector.config['port']
-        host_reader = self.collector.host_reader
-        hosts = test_hosts()
-        self.collector.config['multiple_hosts_mode'] = True
-        self.collector.host_reader = TestHostReader(hosts)
-        requested_list_urls = []
-
-        def se(url):
-            list_urls = [
-                'http://%s:%s/jolokia/list' % (host, port)
-                for host in hosts
-            ]
-            if any(_url in url for _url in list_urls):
-                requested_list_urls.append(url)
-                return self.getFixture('listing')
-            else:
-                return self.getFixture('stats')
-
-        patch_urlopen = patch('urllib2.urlopen', Mock(side_effect=se))
-
-        with patch_urlopen:
-            self.collector.collect()
-        self.collector.config['mutiple_hosts_mode'] = False
-        self.collector.host_reader = host_reader
-
-        self.assertTrue(all(
-            "%s:%s" % (h, port) in requested_list_urls[i]
-            for i, h in enumerate(hosts)
-        ))
-
-        metrics = self.get_metrics()
-        self.setDocExample(collector=self.collector.__class__.__name__,
-                           metrics=metrics,
-                           defaultpath=self.collector.config['url_path'])
-        self.assertPublishedMany(publish_mock, metrics, 2)
-
-    @patch.object(Collector, 'publish')
     def test_real_data_with_rewrite(self, publish_mock):
         def se(url):
             if 'http://localhost:8778/jolokia/list' in url:

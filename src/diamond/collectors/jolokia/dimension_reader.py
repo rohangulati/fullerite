@@ -129,7 +129,7 @@ class KubernetesDimensionReader(DimensionReader):
             if label_value is not None:
                 matches = label_regex.regex.findall(label_value)
                 if len(matches) > 0:
-                    generated[dim] = string.replace(matches[0], "--", "_", -1)
+                    generated[str(dim)] = string.replace(matches[0], "--", "_", -1)
         return generated
 
 

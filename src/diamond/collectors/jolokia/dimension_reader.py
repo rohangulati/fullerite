@@ -207,7 +207,7 @@ class NerveDimensionReader(DimensionReader):
         for dim, regex in dim_generators.items():
             matches = regex.findall(host_id)
             if len(matches) > 0:
-                generated[dim] = matches[0]
+                generated[str(dim)] = matches[0]
         return generated
 
 
@@ -258,7 +258,7 @@ DEFAULT_DIMENSION_READER = NoopDimensionReader()
 def get_reader(name):
     """
     Returns the dimension reader for the given name
-    :param name: name of the dimension readereidfcciknhlfduigieigndrknvcrvjckvnjjhbiedfhf
+    :param name: name of the dimension reader
 
     :return: dimension reader by name or ```DEFAULT_DIMENSION_READER```
     """
